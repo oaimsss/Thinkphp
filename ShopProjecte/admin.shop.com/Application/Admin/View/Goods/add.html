@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>ECSHOP 管理中心 - 编辑商品 </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
+        <link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+        <css href='__ZTREE__/zTreeStyle.css'/>
+        <link href="__UPLOADIFY__/common.css" rel="stylesheet" type="text/css"/>
+        <style type="text/css">
+            .upload-pre-item-gallery img{
+                /*width:150px;*/
+                max-height: 113px;
+            }
+
+            .upload-pre-item-gallery{
+                display:inline-block;
+            }
+
+            .upload-pre-item-gallery a{
+                position:relative;
+                top:5px;
+                right:15px;
+                float:right;
+                color:red;
+                font-size:16px;
+                text-decoration:none;
+            }
+
+            .ztree {
+                margin-top: 10px;
+                border: 1px solid #617775;
+                background: #f0f6e4;
+                width: 220px;
+                overflow-y: scroll;
+                overflow-x: auto;
+            }
+
+        </style>
+    </head>
+    <body>
+        <h1>
+            <span class="action-span"><a href="{:U('index')}">商品列表</a>
+            </span>
+            <span class="action-span1"><a href="__GROUP__">ECSHOP 管理中心</a></span>
+            <span id="search_id" class="action-span1"> - 编辑商品 </span>
+        </h1>
+        <div style="clear:both"></div>
+
+        <div class="tab-div">
+            <div id="tabbody-div">
+                <form enctype="multipart/form-data" action="{:U()}" method="post">
+                    <table width="90%" id="general-table" align="center">
+                        <tr>
+                            <td class="label">商品名称：</td>
+                            <td><input type="text" name="name" value="{$row.name}" size="30" />
+                        </tr>
+                        <tr>
+                            <td class="label">LOGO： </td>
+                            <td>
+                                <input type="hidden" id="logo-data" name="logo"  value="{$row.logo}"/>
+                                <input type="file" id="logo-upload" size="20"/>
+                                <img id="logo-preview" src="{$row.logo}" style="max-height:100px;"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品分类：</td>
+                            <td>
+                                <input type="hidden" name="goods_category_id" id="goods_category_id" value="{$row.goods_category_id}"/>
+                                <input type="text" disabled="disabled" style="padding-left:1em" id="goods_category_name"/>
+                                <ul id="treeDemo" class="ztree"></ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品品牌：</td>
+                            <td>
+                                {:arr2select($brands,'id','name','brand_id',$row['brand_id'])}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">本店售价：</td>
+                            <td>
+                                <input type="text" name="shop_price" value="{$row.shop_price}" size="20"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">市场售价：</td>
+                            <td>
+                                <input type="text" name="market_price" value="{$row.market_price}" size="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">商品数量：</td>
+                            <td>
+                                <input type="text" name="stock" size="8" value="{$row.stock|default=100}"/>
+                            </td>
+                        </tr>
+                        <td class="label">是否上架：</td>
+                        <td>
+                            <input type="radio" name="is_on_sale" value="1" class='is_on_sale'/> 是
+                            <input type="radio" name="is_on_sale" value="0" class='is_on_sale'/> 否
+                        </td>
+                        </tr>
+                        <tr>
+                            <td class="label">加入推荐：</td>
+                            <td>
+                                <input type="checkbox" name="goods_status[]" value="1" class='goods_status' /> 精品 
+                                <input type="checkbox" name="goods_status[]" value="2" class='goods_status'/> 新品 
+                                <input type="checkbox" name="goods_status[]" value="4" class='goods_status'/> 热销
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">推荐排序：</td>
+                            <td>
+                                <input type="text" name="sort" size="5" value="{$row.sort|default=20}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><hr /></td>
+                        </tr>
+
+                        <tr>
+                            <td class="label">商品详细描述：</td>
+                            <td>
+                                <textarea name="content" cols="40" rows="3" id="editor">{$row.content}</textarea>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td><hr /></td>
+                        </tr>
+
+                        <tr>
+                            <td class="label">商品相册：</td>
+                            <td>
+                                <div class="upload-img-box">
+                                    <foreach name='row.galleries' item='gallery'>
+                                        <div class="upload-pre-item-gallery">
+                                            <img src="{$gallery.path}"/>
+                                            <a href="#" data='{$gallery.id}'>×</a>
+                                        </div>
+                                    </foreach>
+
+                                </div>
+
+                                <div>
+                                    <input type="file" id='goods-gallery-upload'/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="button-div">
+                        <input type='hidden' name='id' value='{$row.id}'/>
+                        <input type="submit" value=" 确定 " class="button"/>
+                        <input type="reset" value=" 重置 " class="button" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="footer">
+            共执行 9 个查询，用时 0.025161 秒，Gzip 已禁用，内存占用 3.258 MB<br />
+            版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
+        </div>
+        <js href='__JS__/jquery.min.js'/>
+        <js href='__ZTREE__/jquery.ztree.core.min.js'/>
+        <js href="__UEDITOR__/myueditor.config.js"/>
+        <js href="__UEDITOR__/ueditor.all.min.js"/>
+        <js href="__UEDITOR__/lang/zh-cn/zh-cn.js"/>
+        <script type="text/javascript" src="__UPLOADIFY__/jquery.uploadify.min.js"></script>
+        <js href="__LAYER__/layer.js"/>
+        <script type="text/javascript">
+            
+            var ue = UE.getEditor('editor',{serverUrl: '{:U('Editor/ueditor')}'});
+            var setting = {
+                data: {
+                    simpleData: {
+                        enable: true,
+                        pIdKey: 'parent_id',
+                    }
+                },
+                callback: {
+                    onClick: function (event, tree_ele, node) {
+                        $('#goods_category_id').val(node.id);
+                        $('#goods_category_name').val(node.name);
+                    },
+                }
+            };
+
+            var zNodes = {$goods_categories};
+
+            $(document).ready(function () {
+                var goods_category_ztree = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                goods_category_ztree.expandAll(true);
+                
+                
+                ///回显
+                <present name="row">
+                    //1.回显分类,并将分类名称放在input框中
+                    var goods_category_node = goods_category_ztree.getNodeByParam('id',{$row.goods_category_id});
+                    //1.1选中
+                    goods_category_ztree.selectNode(goods_category_node);
+                    //1.2将名字放在input中
+                    $('#goods_category_name').val(goods_category_node.name);
+                    
+                    
+                </present>
+                    //2.回显是否上架
+                    $('.is_on_sale').val([{$row.is_on_sale|default=1}]);
+                    //3.促销状态的回显
+                    $('.goods_status').val({$row.goods_status});
+            });
+            
+            
+            ////////    相册上传     
+            //uploadify插件
+            $('#goods-gallery-upload').uploadify({
+                'swf': '__UPLOADIFY__/uploadify.swf',
+                uploader:'{:U("Upload/upload")}',
+                buttonText:' 选择文件 ',
+                fileObjName:'file_data',
+                fileSizeLimit:'2048K',
+                fileTypeExts:'*.jpg;*.jpeg;*.png;*.gif',
+                onUploadSuccess:function(file_obj,data){
+                    data = $.parseJSON(data);
+                    if(data.status){ //上传成功
+                        //使用layer弹出提示
+                        layer.alert(data.msg, {icon: 6});
+                        
+                        
+                        //创建div,预览图片
+                        
+//                        <div class="upload-pre-item-gallery">
+//                                        <img src="__IMG__/goods3.jpg"/>
+//                                        <a href="#">×</a>
+//                                    </div>
+
+                            var html = '<div class="upload-pre-item-gallery">\
+                                        <img src="'+data.url+'"/>\
+                                        <a href="#">×</a>\
+                                        <input type="hidden" value="'+data.url+'" name="path[]"/>\
+                                    </div>';
+                            $(html).appendTo($('.upload-img-box'));
+                    }else{ //上传失败
+                        //提示
+                        layer.alert(data.msg, {icon: 5});
+                    }
+                },
+            });
+            
+            
+            //-------------- logo 上传 ----------------
+            $('#logo-upload').uploadify({
+                'swf': '__UPLOADIFY__/uploadify.swf',
+                uploader:'{:U("Upload/upload")}',
+                buttonText:' 选择文件 ',
+                fileObjName:'file_data',
+                fileSizeLimit:'2048K',
+                fileTypeExts:'*.jpg;*.jpeg;*.png;*.gif',
+                onUploadSuccess:function(file_obj,data){
+                    data = $.parseJSON(data);
+                    if(data.status){ //上传成功
+                        //1.将图片地址放入到隐藏域中
+                        //2.提示
+                        $('#logo-data').val(data.url);
+                        $('#logo-preview').attr('src',data.url);
+                        //使用layer弹出提示
+
+                        layer.alert(data.msg, {icon: 6});
+                    }else{ //上传失败
+                        //提示
+                        layer.alert(data.msg, {icon: 5});
+                    }
+                },
+            });
+            
+            
+            //绑定事件,事件委托,因为js添加的节点,不使用委托,无法监听
+            $('.upload-img-box').on('click','a',function(){
+                var gallery_id = $(this).attr('data');
+                var parent_node = $(this).parent();
+                var url = '{:U("GoodsGallery/remove")}';
+                //删除数据库已有的
+                if(gallery_id){
+                    //说明是数据库中已存的,需要ajax删除
+                    var data = {
+                        id:gallery_id,
+                    };
+                    $.getJSON(url,data,function(data){
+                        if(data.status){
+                            layer.alert(data.info, {icon: 6});
+                            parent_node.remove();
+                        }else{
+                            layer.alert(data.info, {icon: 5});
+                        }
+                    });
+                }else{ //删除刚刚上传还没有保存的
+                    parent_node.remove();
+                    layer.alert('删除成功', {icon: 6});
+                }
+            });
+        </script>
+    </body>
+</html>
